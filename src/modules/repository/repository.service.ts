@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nitrostack/core';
 import { GitService, Commit } from '../../services/git.service.js';
 import { RiskScorerService } from '../../services/risk-scorer.service.js';
-
+import * as fs from 'fs';
 @Injectable({ deps: [GitService, RiskScorerService] })
 export class RepositoryService {
   constructor(
@@ -14,8 +14,6 @@ export class RepositoryService {
    * Connect to a repository and validate it
    */
   connectRepository(repoPath: string) {
-    // Validate the path exists
-    const fs = require('fs');
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }
@@ -41,8 +39,6 @@ export class RepositoryService {
    * Compare two branches in a repository
    */
   compareBranches(repoPath: string, baseBranch: string, targetBranch: string) {
-    // Validate repository exists
-    const fs = require('fs');
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }
@@ -89,8 +85,6 @@ export class RepositoryService {
    * Calculate repository health score
    */
   getRepositoryHealthScore(repoPath: string) {
-    // Validate repository exists
-    const fs = require('fs');
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }
