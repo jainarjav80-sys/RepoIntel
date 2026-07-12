@@ -1,0 +1,197 @@
+[
+  {
+    "hash": "a3f7e2c1",
+    "message": "Update .env with new API keys",
+    "author": "alice@example.com",
+    "date": "2026-06-25T14:30:00Z",
+    "diffStats": {
+      "additions": 5,
+      "deletions": 2,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": [".env"],
+    "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "b4e8f3d2",
+    "message": "Refactor database connection logic",
+    "author": "bob@example.com",
+    "date": "2026-06-24T10:15:00Z",
+    "diffStats": {
+      "additions": 245,
+      "deletions": 189,
+      "filesChanged": 8
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "c5f9g4e3",
+    "message": "Add migration for user schema",
+    "author": "charlie@example.com",
+    "date": "2026-06-23T09:45:00Z",
+    "diffStats": {
+      "additions": 78,
+      "deletions": 12,
+      "filesChanged": 2
+    },
+    "sensitiveFiles": ["migrations/001_user_schema.sql"],
+    "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "d6g0h5f4",
+    "message": "Update package.json dependencies",
+    "author": "diana@example.com",
+    "date": "2026-06-22T16:20:00Z",
+    "diffStats": {
+      "additions": 42,
+      "deletions": 38,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": ["package.json"],
+    "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "e7h1i6g5",
+    "message": "Fix typo in README",
+    "author": "eve@example.com",
+    "date": "2026-06-21T11:30:00Z",
+    "diffStats": {
+      "additions": 1,
+      "deletions": 1,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "f8i2j7h6",
+    "message": "Modify config.yml for production",
+    "author": "frank@example.com",
+    "date": "2026-06-20T13:00:00Z",
+    "diffStats": {
+      "additions": 15,
+      "deletions": 8,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": ["config/config.yml"],
+    "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "g9j3k8i7",
+    "message": "Massive refactor of authentication module",
+    "author": "grace@example.com",
+    "date": "2026-06-19T08:45:00Z",
+    "diffStats": {
+      "additions": 1203,
+      "deletions": 987,
+      "filesChanged": 34
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "h0k4l9j8",
+    "message": "Add database credentials to config",
+    "author": "henry@example.com",
+    "date": "2026-06-18T15:30:00Z",
+    "diffStats": {
+      "additions": 8,
+      "deletions": 0,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": ["config/database.yml"],
+    "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "i1l5m0k9",
+    "message": "Update API endpoints documentation",
+    "author": "iris@example.com",
+    "date": "2026-06-17T12:15:00Z",
+    "diffStats": {
+      "additions": 156,
+      "deletions": 89,
+      "filesChanged": 5
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "j2m6n1l0",
+    "message": "Fix critical security vulnerability in auth",
+    "author": "jack@example.com",
+    "date": "2026-06-16T10:00:00Z",
+    "diffStats": {
+      "additions": 34,
+      "deletions": 28,
+      "filesChanged": 3
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "k3n7o2m1",
+    "message": "Add .env.production file",
+    "author": "kate@example.com",
+    "date": "2026-06-15T14:45:00Z",
+    "diffStats": {
+      "additions": 12,
+      "deletions": 0,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": [".env.production"],
+    "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "l4o8p3n2",
+    "message": "Refactor payment processing logic",
+    "author": "leo@example.com",
+    "date": "2026-06-14T09:30:00Z",
+    "diffStats": {
+      "additions": 567,
+      "deletions": 423,
+      "filesChanged": 12
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "m5p9q4o3",
+    "message": "Update migration scripts",
+    "author": "mia@example.com",
+    "date": "2026-06-13T11:20:00Z",
+    "diffStats": {
+      "additions": 89,
+      "deletions": 45,
+      "filesChanged": 3
+    },
+    "sensitiveFiles": ["migrations/002_add_indexes.sql"],
+    "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "n6q0r5p4",
+    "message": "Add secrets to environment config",
+    "author": "noah@example.com",
+    "date": "2026-06-12T16:00:00Z",
+    "diffStats": {
+      "additions": 6,
+      "deletions": 2,
+      "filesChanged": 1
+    },
+    "sensitiveFiles": [".env.secrets"],
+    "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+  },
+  {
+    "hash": "o7r1s6q5",
+    "message": "Minor formatting changes",
+    "author": "olivia@example.com",
+    "date": "2026-06-11T13:45:00Z",
+    "diffStats": {
+      "additions": 3,
+      "deletions": 3,
+      "filesChanged": 2
+    },
+    "sensitiveFiles": [],
+    "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+  }
+]
