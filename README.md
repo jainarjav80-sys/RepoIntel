@@ -1,44 +1,58 @@
 # 🔍 Git Risk Analyzer
-Automated Git repository analysis and risk scoring.
 
-NitroStack TypeScript License: MIT MCP Offline Zero API Keys
+**Your repository's right hand — know what's risky before it merges.**
 
-"Know your repository's health before a bad commit breaks it."
+[![NitroStack](https://img.shields.io/badge/NitroStack-TypeScript-blue)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)]()
+[![MCP](https://img.shields.io/badge/MCP-Offline-orange)]()
+[![Zero API Keys](https://img.shields.io/badge/API%20Keys-None-brightgreen)]()
 
-Git Risk Analyzer is an MCP (Model Context Protocol) server that analyzes local Git repositories and identifies risky commits. It provides maintainers and engineering managers with deep insights into repository health, contributor patterns, and risk metrics.
+> "Know your repository's health before a bad commit breaks it."
 
-Built on NitroStack, Git Risk Analyzer exposes its findings as MCP tools and renders interactive visualizations via built-in widgets.
+Git Risk Analyzer is an MCP (Model Context Protocol) server that scans local Git repositories and surfaces risky commits, contributor patterns, and repo-wide health metrics — entirely offline, with zero setup.
 
-## ✨ Why Git Risk Analyzer?
-Most code analysis tools force you to upload source to the cloud, pay for SaaS subscriptions, or wait minutes for scans. Git Risk Analyzer does none of that.
+It's built for two moments that matter most: **reviewing a PR before you merge it**, and **inheriting a codebase you didn't write**. Built on NitroStack, it exposes all findings as MCP tools so any AI assistant can query your repo's risk profile directly.
 
-✅ **100% offline** — your code and git history never leave your machine
-✅ **Deep Git Integration** — analyzes actual commit history and diff statistics
-✅ **Instant results** — processes thousands of commits in seconds
-✅ **AI-native** — designed for MCP, works with any AI assistant
+---
 
-## 🎯 Who Is It For?
-**🎓 Students & Learners**
-- Understand how your commit habits impact repository health
-- Catch risky changes before pushing assignments
+## Why Git Risk Analyzer?
 
-**💼 Professional Developers**
-- Pre-commit health checks before opening PRs
-- Onboard faster on unfamiliar codebases by understanding contributor patterns
-- Identify hardcoded secrets and risky file changes (like `.env` or config modifications)
+Most code analysis tools force you to upload source to the cloud, pay for a SaaS subscription, or wait minutes for a scan. Git Risk Analyzer does none of that.
 
-**🏢 Engineering Teams**
-- Track health scores across releases
-- Automated code review guidance for junior developers
-- Bus factor analysis to ensure knowledge isn't locked up with one developer
+- ✅ **100% offline** — your code and git history never leave your machine
+- ✅ **Deep Git integration** — analyzes real commit history and diff statistics, not just metadata
+- ✅ **Instant results** — processes thousands of commits in seconds
+- ✅ **AI-native** — designed for MCP, works with any AI assistant
 
-## 🚀 Project Features
+---
+
+## Who is it for?
+
+**🏢 Maintainers — your right hand for triage and review**
+This is where the tool earns its keep. Maintainers can't manually review every incoming PR line by line — Git Risk Analyzer tells you *where to look first*.
+- Score incoming PRs before reviewing them, so you know which ones need a close read
+- Run `compare-branches` as a pre-merge gate — catch a risky feature branch before it lands on `main`
+- Spot bus-factor risk: who's the only person touching a critical file
+- Decide who gets merge rights based on real contribution history, not gut feel
+
+**💼 Professional developers**
+- Pre-commit health checks before opening a PR yourself
+- Onboard faster on an unfamiliar codebase by seeing contributor patterns and hotspots
+- Catch hardcoded secrets or risky file changes (`.env`, config, migrations) before they ship
+
+**🎓 Students & learners**
+- Understand how commit habits affect repository health
+- Catch risky changes before submitting an assignment
+
+---
+
+## Project Features
 
 ### 1. Repository Health Score
 **Tool:** `repository-health-score`
 
-Scans the entire repository history and returns a comprehensive health status:
-- Overall health score (excellent, good, fair, poor)
+Scans the full repository history and returns:
+- Overall health status (excellent / good / fair / poor)
 - Total commits and contributors
 - Most modified files (hotspots)
 - Recent activity and actionable recommendations
@@ -46,76 +60,90 @@ Scans the entire repository history and returns a comprehensive health status:
 ### 2. Commit Risk Scoring
 **Tool:** `score-commit`
 
-Analyzes a specific commit and calculates a precise risk score (0-100) based on:
-- **Message Quality:** Penalizes short or unclear commit messages
-- **Diff Size:** Penalizes massive changes (additions + deletions)
-- **Sensitive Files:** Penalizes changes to `.env`, `package.json`, migrations, and configs
-- Includes a human-readable summary and reasoning with the `verbose` flag.
+Analyzes a single commit and returns a risk score (0–100) based on:
+- **Message quality** — penalizes short or unclear commit messages
+- **Diff size** — penalizes unusually large changesets
+- **Sensitive files** — penalizes changes to `.env`, `package.json`, migrations, and config files
+
+Pass `verbose: true` for a human-readable summary with reasoning behind the score.
 
 ### 3. Contributor Statistics
 **Tool:** `contributor-stats`
 
-Provides deep insights into individual contributors or ranks all contributors by risk:
-- Total commits and average risk score
+Deep insight into individual contributors, or a full team ranking:
+- Total commits and average risk score per author
 - High-risk commits authored
 - Most frequently modified files by author
-- Rank all contributors by average risk score or commit count
+- `sortBy: risk` ranks all contributors by average risk score
 
 ### 4. Risky Commits List
 **Tool:** `list-risky-commits`
 
-Filters the repository history to find the most dangerous commits:
+Filters repository history down to the commits that matter:
 - Configurable risk threshold
-- Returns commits exceeding the threshold, ranked by score
+- Returns matching commits ranked by score
 
 ### 5. Comprehensive Risk Report
 **Tool:** `generate-risk-report`
 
-Generates an aggregated report of the repository's risk profile:
-- Analyzes the entire repository
-- Highlights the top 10 most risky commits
-- Perfect for sprint retrospectives
+One-shot aggregate report across the whole repository:
+- Highlights the top 10 highest-risk commits
+- Built for sprint retrospectives and hand-off documentation
 
 ### 6. Branch Comparison
 **Tool:** `compare-branches`
 
-Compares risk metrics between two branches (e.g., `feature-branch` vs `main`):
-- Helps identify if a new branch is introducing excessive risk before merging
+The pre-merge gate. Compares risk metrics between two branches (e.g. `feature/x` vs `main`):
+- Flags whether a branch is introducing excessive risk before you approve the merge
 
-## 💡 Example Use Cases
+---
 
-**"I'm inheriting a legacy codebase. Where do I start?"**
-Run `repository-health-score` → see the most modified files and overall health to know exactly where the hotspots are.
+## Example Use Cases
 
-**"Who are the top 5 riskiest contributors?"**
-Run `contributor-stats` with `sortBy: risk` → returns a ranked list of contributors based on their commit risk scores.
+**"Should I merge this PR right now?"**
+Run `compare-branches` on the PR branch vs `main` before approving — see the risk delta at a glance.
+
+**"I'm inheriting a legacy codebase — where do I start?"**
+Run `repository-health-score` — see hotspots and overall health in one call.
+
+**"Who are my riskiest contributors this quarter?"**
+Run `contributor-stats` with `sortBy: risk` — get a ranked list to guide review priorities, not blame.
 
 **"Did this commit introduce something dangerous?"**
-Run `score-commit` with `verbose: true` → catch hardcoded keys or massive refactors in sensitive files.
+Run `score-commit` with `verbose: true` — catch hardcoded keys or oversized refactors in sensitive files.
 
 **"My team needs a risk report for the sprint."**
-Run `generate-risk-report` → professional output summarizing the riskiest changes.
+Run `generate-risk-report` — a clean, professional summary of the riskiest changes.
 
-## 📝 Tools Summary
+---
+
+## Tools Summary
 
 | Tool | Module | Input | Output |
-|------|--------|-------|--------|
-| `connect-repository` | repository | `{ repo_path }` | Connection status and basic info |
+|---|---|---|---|
+| `connect-repository` | repository | `{ repo_path }` | Connection status and basic repo info |
 | `repository-health-score` | repository | `{ repo_path? }` | Full health score, hotspots, recommendations |
 | `score-commit` | scanner | `{ commit_hash, repo_path?, verbose? }` | Detailed risk score and summary |
-| `fetch-recent-commits` | scanner | `{ limit?, repo_path? }` | Array of recent commits with stats |
-| `list-risky-commits` | reporter | `{ threshold?, repo_path? }` | Commits exceeding risk threshold |
+| `fetch-recent-commits` | scanner | `{ limit?, repo_path? }` | Array of recent commits with diff stats |
+| `list-risky-commits` | reporter | `{ threshold?, repo_path? }` | Commits exceeding the risk threshold |
 | `generate-risk-report` | reporter | `{ repo_path? }` | Comprehensive risk report |
-| `contributor-stats` | contributors | `{ author?, repo_path?, sortBy?, limit? }` | Ranked stats and high-risk commits |
-| `compare-branches` | repository | `{ base_branch, target_branch, repo_path? }` | Comparison of risk metrics |
+| `contributor-stats` | contributors | `{ author?, repo_path?, sortBy?, limit? }` | Ranked contributor stats and high-risk commits |
+| `compare-branches` | repository | `{ base_branch, target_branch, repo_path? }` | Risk comparison between two branches |
 
-## 🎯 Accuracy
-Git Risk Analyzer uses native local Git execution (`spawnSync`) to directly interface with your local repository. This means:
-- **No external API calls** — entirely local and fast
-- **Accurate Diffing** — uses raw git log outputs for precise addition/deletion counts
-- **Fixture Fallback** — smoothly falls back to mock data (`fixtures/commits.json`) for testing if no repository path is provided
+---
 
-## 📦 Quick Start
+## Accuracy
+
+Git Risk Analyzer uses native local Git execution (`spawnSync`) to interface directly with your repository:
+
+- No external API calls — entirely local and fast
+- Accurate diffing — uses raw `git log` output for precise addition/deletion counts
+- Fixture fallback — falls back to mock data (`fixtures/commits.json`) for testing when no repository path is provided
+
+---
+
+## Quick Start
+
 ```bash
 # Install dependencies
 npm install
@@ -130,22 +158,30 @@ npm run build
 npm start
 ```
 
-## ⚙️ Configuration
-Transport is configured automatically based on `NODE_ENV`:
-- Development (`NODE_ENV=development`): STDIO only
-- Production (`NODE_ENV=production`): Dual transport (STDIO + HTTP SSE)
+---
+
+## Configuration
+
+Transport is selected automatically based on `NODE_ENV`:
+
+- **Development** (`NODE_ENV=development`): STDIO only
+- **Production** (`NODE_ENV=production`): Dual transport (STDIO + HTTP SSE)
+
 Environment variables are loaded from `.env` via `dotenv`.
 
-## 🏗️ Project Structure
-```text
+---
+
+## Project Structure
+
+```
 src/
 ├── index.ts                       # Entry point
 ├── app.module.ts                  # Root MCP module
 ├── modules/
 │   ├── scanner/                   # Fetch commits, score individual commits
 │   ├── reporter/                  # Generate reports, list risky commits
-│   ├── repository/                # Analyze commits, repository summaries
-│   └── contributors/              # Contributor stats, risk ranking
+│   ├── repository/                # Repository health, connection, branch comparison
+│   └── contributors/              # Contributor stats and risk ranking
 ├── services/
 │   ├── git.service.ts             # Git operations & CLI execution
 │   └── risk-scorer.service.ts     # Core risk scoring logic
@@ -153,27 +189,33 @@ src/
     └── system.health.ts           # System health check
 ```
 
-## 🛠️ Dependencies
-- **@nitrostack/core** — MCP framework with decorators and DI
-- **@nitrostack/cli** — Build tooling
-- **typescript** — Strong typing
-- **zod** — Input schema validation
-- **@nitrostack/widgets** — Widget SDK for interactive views
+---
 
-## 🔒 Privacy & Security
+## Dependencies
+
+- `@nitrostack/core` — MCP framework with decorators and DI
+- `@nitrostack/cli` — Build tooling
+- `typescript` — Strong typing
+- `zod` — Input schema validation
+- `@nitrostack/widgets` — Widget SDK for interactive views
+
+---
+
+## Privacy & Security
+
 - **Zero network calls** — everything runs locally
-- **No code upload** — your repository stays on your machine
+- **No code upload** — your repository never leaves your machine
 - **No API keys** — no external services, no rate limits
 - **No telemetry** — we don't track what you analyze
 
-## 🔗 Links
-- [NitroStack Documentation](https://docs.nitrostack.ai)
-- [NitroStudio](https://nitrostack.ai/studio)
-- [GitHub](https://github.com/nitrocloudofficial/nitrostack)
+---
 
-## Community
-- Discord: <https://discord.gg/uVWey6UhuD>
-- X: <https://x.com/nitrostackai>
-- YouTube: <https://www.youtube.com/@nitrostackai>
-- LinkedIn: <https://linkedin.com/company/nitrostack-ai/>
-- GitHub: <https://github.com/nitrostackai>
+## Links
+
+- [NitroStack Documentation](#)
+- [NitroStudio](#)
+- [GitHub](#)
+
+---
+
+<p align="center">Built for maintainers who'd rather catch risk before it merges.</p>
