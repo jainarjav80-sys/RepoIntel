@@ -1,1 +1,0 @@
-{"version":3,"file":"contributors.tools.d.ts","sourceRoot":"","sources":["../../../src/modules/contributors/contributors.tools.ts"],"names":[],"mappings":"AAAA,OAAO,EAAqC,gBAAgB,EAAE,MAAM,kBAAkB,CAAC;AACvF,OAAO,EAAE,mBAAmB,EAAE,MAAM,2BAA2B,CAAC;AAGhE,qBACa,iBAAiB;IAChB,OAAO,CAAC,mBAAmB;gBAAnB,mBAAmB,EAAE,mBAAmB;IA2BtD,gBAAgB,CAAC,KAAK,EAAE,GAAG,EAAE,GAAG,EAAE,gBAAgB;;;CAmCzD"}
