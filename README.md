@@ -1,4 +1,4 @@
-# 🔍 Git Risk Analyzer
+# RepoIntel
 
 **Your repository's right hand — know what's risky before it merges.**
 
@@ -9,13 +9,13 @@
 
 > "Know your repository's health before a bad commit breaks it."
 
-Git Risk Analyzer is an MCP (Model Context Protocol) server that scans local Git repositories and surfaces risky commits, contributor patterns, and repo-wide health metrics — entirely offline, with zero setup.
+RepoIntel is an MCP (Model Context Protocol) server that scans local Git repositories and surfaces risky commits, contributor patterns, and repo-wide health metrics — entirely offline, with zero setup.
 
 It's built for two moments that matter most: **reviewing a PR before you merge it**, and **inheriting a codebase you didn't write**. Built on NitroStack, it exposes all findings as MCP tools so any AI assistant can query your repo's risk profile directly.
 
 ---
 
-## Why Git Risk Analyzer?
+## Why RepoIntel?
 
 Most code analysis tools force you to upload source to the cloud, pay for a SaaS subscription, or wait minutes for a scan. Git Risk Analyzer does none of that.
 
@@ -134,7 +134,7 @@ Run `generate-risk-report` — a clean, professional summary of the riskiest cha
 
 ## Accuracy
 
-Git Risk Analyzer uses native local Git execution (`spawnSync`) to interface directly with your repository:
+RepoIntel uses native local Git execution (`spawnSync`) to interface directly with your repository:
 
 - No external API calls — entirely local and fast
 - Accurate diffing — uses raw `git log` output for precise addition/deletion counts
