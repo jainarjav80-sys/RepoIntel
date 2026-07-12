@@ -230,44 +230,20 @@ export class RepositoryTools {
       const repoUrl = match[1];
       const prNumber = match[2];
 
-      // Try to perform real git operations, fallback to demo mode if it fails (e.g. on serverless cloud environments missing git)
-      let result;
-      try {
-        // 1. Resolve/clone the base repository
-        const localPath = this.gitService.resolveRepositoryPath(repoUrl);
-        
-        // 2. Fetch the PR branch
-        const prBranch = this.gitService.fetchPullRequest(localPath, prNumber);
-        
-        // 3. Determine the default branch to compare against
-        const defaultBranch = this.gitService.getDefaultBranch(localPath);
+      // 1. Resolve/clone the base repository
+      const localPath = this.gitService.resolveRepositoryPath(repoUrl);
+      
+      // 2. Fetch the PR branch
+      const prBranch = this.gitService.fetchPullRequest(localPath, prNumber);
+      
+      // 3. Determine the default branch to compare against
+      const defaultBranch = this.gitService.getDefaultBranch(localPath);
 
-        // 4. Compare branches to calculate risk
-        result = this.repositoryService.compareBranches(localPath, defaultBranch, prBranch);
-        
-        // Customize summary
-        result.summary = `PR #${prNumber} compared against ${defaultBranch}: ` + result.summary;
-      } catch (cloneError) {
-        const errorMsg = cloneError instanceof Error ? cloneError.message : String(cloneError);
-        ctx.logger.warn('Failed to clone or fetch PR, falling back to demo mode for hackathon', { error: errorMsg });
-        
-        // Mock data for hackathon presentation when running on NitroCloud
-        result = {
-          base_branch: 'main',
-          target_branch: `pr-${prNumber}`,
-          files_changed: ['src/services/auth.service.ts', 'config/database.yml', 'package.json'],
-          lines_added: 215,
-          lines_removed: 43,
-          files_count: 3,
-          risk_score: 88,
-          risk_factors: [
-            'Modifies core authentication logic (src/services/auth.service.ts)',
-            'Changes to database configuration detected (config/database.yml)',
-            'New dependencies added to package.json'
-          ],
-          summary: `[DEMO MODE] PR #${prNumber} compared against main: HIGH RISK. This PR introduces significant changes to authentication and database configurations. A thorough security review is strongly recommended before merging.`
-        };
-      }
+      // 4. Compare branches to calculate risk
+      const result = this.repositoryService.compareBranches(localPath, defaultBranch, prBranch);
+      
+      // Customize summary
+      result.summary = `PR #${prNumber} compared against ${defaultBranch}: ` + result.summary;
 
       ctx.logger.info('PR Analyzed', { risk_score: result.risk_score });
 
