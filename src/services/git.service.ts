@@ -1,6 +1,8 @@
 import { Injectable, createLogger } from '@nitrostack/core';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+import * as crypto from 'crypto';
 import { execSync, spawnSync } from 'child_process';
 
 const logger = createLogger({ serviceName: 'GitService' });
@@ -75,6 +77,70 @@ export interface ContributorStat {
 @Injectable()
 export class GitService {
   /**
+   * Resolve a repository path, transparently cloning URLs if necessary
+   */
+  resolveRepositoryPath(repoPathOrUrl: string): string {
+    if (!repoPathOrUrl) return repoPathOrUrl;
+
+    if (repoPathOrUrl.startsWith('http://') || repoPathOrUrl.startsWith('https://')) {
+      const hash = crypto.createHash('md5').update(repoPathOrUrl).digest('hex');
+      const cacheDir = path.join(os.tmpdir(), 'nitro-git-cache');
+      
+      if (!fs.existsSync(cacheDir)) {
+        fs.mkdirSync(cacheDir, { recursive: true });
+      }
+
+      const cloneDir = path.join(cacheDir, hash);
+
+      if (!fs.existsSync(cloneDir)) {
+        logger.info(`Cloning remote repository ${repoPathOrUrl} to ${cloneDir}`);
+        const result = spawnSync('git', ['clone', repoPathOrUrl, cloneDir], { encoding: 'utf-8' });
+        if (result.status !== 0) {
+          throw new Error(`Failed to clone repository: ${result.stderr}`);
+        }
+      } else {
+        logger.info(`Repository already cached at ${cloneDir}, pulling latest changes`);
+        spawnSync('git', ['-C', cloneDir, 'pull'], { encoding: 'utf-8' });
+      }
+
+      return cloneDir;
+    }
+
+    return repoPathOrUrl;
+  }
+
+  /**
+   * Fetch a Pull Request branch
+   */
+  fetchPullRequest(repoPath: string, prNumber: string): string {
+    const localPath = this.resolveRepositoryPath(repoPath);
+    const branchName = `pr-${prNumber}`;
+    // Force fetch to overwrite if branch already exists
+    const result = spawnSync('git', ['-C', localPath, 'fetch', '-f', 'origin', `pull/${prNumber}/head:${branchName}`], { encoding: 'utf-8' });
+    if (result.status !== 0) {
+       throw new Error(`Failed to fetch PR: ${result.stderr}`);
+    }
+    return branchName;
+  }
+
+  /**
+   * Get Default Branch from origin
+   */
+  getDefaultBranch(repoPath: string): string {
+    const localPath = this.resolveRepositoryPath(repoPath);
+    try {
+      const result = this.executeGitCommand(localPath, ['symbolic-ref', 'refs/remotes/origin/HEAD']);
+      if (result) {
+        const parts = result.split('/');
+        return parts[parts.length - 1];
+      }
+      return 'main';
+    } catch {
+      return 'main';
+    }
+  }
+
+  /**
    * Extract the remote URL from git config
    * Parses 'git remote -v' output to get the first remote URL
    */
@@ -110,6 +176,7 @@ export class GitService {
    */
   validateRepository(repoPath: string): RepositoryInfo {
     try {
+      repoPath = this.resolveRepositoryPath(repoPath);
       // Normalize path
       const normalizedPath = path.resolve(repoPath);
 
@@ -282,6 +349,8 @@ export class GitService {
     if (!repoPath) {
       return this.loadCommitsFromFixtures().slice(0, limit);
     }
+    
+    repoPath = this.resolveRepositoryPath(repoPath);
 
     // Validate repository
     const validation = this.validateRepository(repoPath);
@@ -488,6 +557,7 @@ export class GitService {
    */
   getCommitDetails(repoPath: string, hash: string): Commit | null {
     try {
+      repoPath = this.resolveRepositoryPath(repoPath);
       const validation = this.validateRepository(repoPath);
       if (!validation.connected) {
         // Try fixtures
@@ -538,6 +608,7 @@ export class GitService {
         return this.getContributorStatsFromFixtures();
       }
 
+      repoPath = this.resolveRepositoryPath(repoPath);
       const validation = this.validateRepository(repoPath);
       if (!validation.connected) {
         return this.getContributorStatsFromFixtures();
@@ -574,6 +645,7 @@ export class GitService {
    */
   compareBranches(repoPath: string, baseBranch: string, targetBranch: string): BranchDiff {
     try {
+      repoPath = this.resolveRepositoryPath(repoPath);
       const validation = this.validateRepository(repoPath);
       if (!validation.connected) {
         return { files_changed: [], lines_added: 0, lines_removed: 0, files_count: 0 };
@@ -681,6 +753,7 @@ export class GitService {
    */
   getAllCommits(repoPath?: string): Commit[] {
     if (repoPath) {
+      repoPath = this.resolveRepositoryPath(repoPath);
       const validation = this.validateRepository(repoPath);
       if (validation.connected) {
         const commits = this.parseGitLog(repoPath, 1000);
@@ -710,6 +783,9 @@ export class GitService {
    * Get unique authors
    */
   getAuthors(repoPath?: string): string[] {
+    if (repoPath) {
+      repoPath = this.resolveRepositoryPath(repoPath);
+    }
     const allCommits = this.getAllCommits(repoPath);
     const authors = new Set(allCommits.map(c => c.author));
     return Array.from(authors);

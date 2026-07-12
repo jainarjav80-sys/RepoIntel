@@ -14,6 +14,7 @@ export class RepositoryService {
    * Connect to a repository and validate it
    */
   connectRepository(repoPath: string) {
+    repoPath = this.gitService.resolveRepositoryPath(repoPath);
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }
@@ -39,6 +40,7 @@ export class RepositoryService {
    * Compare two branches in a repository
    */
   compareBranches(repoPath: string, baseBranch: string, targetBranch: string) {
+    repoPath = this.gitService.resolveRepositoryPath(repoPath);
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }
@@ -85,6 +87,7 @@ export class RepositoryService {
    * Calculate repository health score
    */
   getRepositoryHealthScore(repoPath: string) {
+    repoPath = this.gitService.resolveRepositoryPath(repoPath);
     if (!fs.existsSync(repoPath)) {
       throw new Error(`Repository path does not exist: ${repoPath}`);
     }

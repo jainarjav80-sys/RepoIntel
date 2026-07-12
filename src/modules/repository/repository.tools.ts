@@ -1,6 +1,6 @@
 import { ToolDecorator as Tool, Injectable, ExecutionContext } from '@nitrostack/core';
 import { RepositoryService } from './repository.service.js';
-import { ConnectRepositoryInputSchema, ConnectRepositoryOutputSchema, CompareBranchesInputSchema, CompareBranchesOutputSchema, RepositoryHealthScoreInputSchema, RepositoryHealthScoreOutputSchema } from './schemas/commit.schema.js';
+import { ConnectRepositoryInputSchema, ConnectRepositoryOutputSchema, CompareBranchesInputSchema, CompareBranchesOutputSchema, RepositoryHealthScoreInputSchema, RepositoryHealthScoreOutputSchema, AnalyzePrInputSchema } from './schemas/commit.schema.js';
 import { GitService } from '../../services/git.service.js';
 
 @Injectable({ deps: [RepositoryService, GitService] })
@@ -187,6 +187,74 @@ export class RepositoryTools {
         error: errorMessage
       });
       throw new Error(`Failed to calculate repository health score: ${errorMessage}`);
+    }
+  }
+
+  @Tool({
+    name: 'analyze-pr',
+    description: 'Analyze a GitHub Pull Request and provide a precise risk score and summary without using the GitHub API',
+    inputSchema: AnalyzePrInputSchema,
+    examples: {
+      request: {
+        pr_url: 'https://github.com/headlamp-k8s/headlamp/pull/123'
+      },
+      response: {
+        base_branch: 'main',
+        target_branch: 'pr-123',
+        files_changed: ['src/config.ts', '.env.example'],
+        lines_added: 45,
+        lines_removed: 12,
+        files_count: 2,
+        risk_score: 65,
+        risk_factors: [
+          'Modifies configuration files'
+        ],
+        summary: 'PR 123 has 2 files changed (+45/-12). Risk score: 65/100 due to config file modifications.'
+      }
+    }
+  })
+  async analyzePr(input: any, ctx: ExecutionContext) {
+    try {
+      if (!input.pr_url || typeof input.pr_url !== 'string') {
+        throw new Error('pr_url is required and must be a valid GitHub PR URL');
+      }
+
+      ctx.logger.info('Analyzing PR', { pr_url: input.pr_url });
+
+      // Extract repo URL and PR number from something like https://github.com/owner/repo/pull/123
+      const match = input.pr_url.match(/^(https?:\/\/github\.com\/[^\/]+\/[^\/]+)\/pull\/(\d+)/);
+      if (!match) {
+        throw new Error('Invalid GitHub PR URL format. Expected: https://github.com/owner/repo/pull/123');
+      }
+
+      const repoUrl = match[1];
+      const prNumber = match[2];
+
+      // 1. Resolve/clone the base repository
+      const localPath = this.gitService.resolveRepositoryPath(repoUrl);
+      
+      // 2. Fetch the PR branch
+      const prBranch = this.gitService.fetchPullRequest(localPath, prNumber);
+      
+      // 3. Determine the default branch to compare against
+      const defaultBranch = this.gitService.getDefaultBranch(localPath);
+
+      // 4. Compare branches to calculate risk
+      const result = this.repositoryService.compareBranches(localPath, defaultBranch, prBranch);
+      
+      // Customize summary
+      result.summary = `PR #${prNumber} compared against ${defaultBranch}: ` + result.summary;
+
+      ctx.logger.info('PR Analyzed', { risk_score: result.risk_score });
+
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      ctx.logger.error('Failed to analyze PR', {
+        pr_url: input.pr_url,
+        error: errorMessage
+      });
+      throw new Error(`Failed to analyze PR: ${errorMessage}`);
     }
   }
 }

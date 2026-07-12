@@ -84,3 +84,8 @@ export type CompareBranchesInput = z.infer<typeof CompareBranchesInputSchema>;
 export type CompareBranchesOutput = z.infer<typeof CompareBranchesOutputSchema>;
 export type RepositoryHealthScoreInput = z.infer<typeof RepositoryHealthScoreInputSchema>;
 export type RepositoryHealthScoreOutput = z.infer<typeof RepositoryHealthScoreOutputSchema>;
+
+export const AnalyzePrInputSchema = z.object({
+  pr_url: z.string().describe('URL of the GitHub Pull Request (e.g. https://github.com/owner/repo/pull/123)')
+});
+export type AnalyzePrInput = z.infer<typeof AnalyzePrInputSchema>;
