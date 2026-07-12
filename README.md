@@ -1,147 +1,177 @@
-# Git Risk Analyzer — Repository Intelligence MCP
+# 🔍 Git Risk Analyzer
+Automated Git repository analysis and risk scoring.
 
-An offline MCP server that analyzes local Git repositories and identifies risky commits. Provides maintainers and engineering managers with deep insights into repository health, contributor patterns, and risk metrics.
+NitroStack TypeScript License: MIT MCP Offline Zero API Keys
 
-## What This Project Includes
+"Know your repository's health before a bad commit breaks it."
 
-### Core Modules
+Git Risk Analyzer is an MCP (Model Context Protocol) server that analyzes local Git repositories and identifies risky commits. It provides maintainers and engineering managers with deep insights into repository health, contributor patterns, and risk metrics.
 
-- **Scanner Module**: Fetches recent commits and calculates risk scores (0-100)
-- **Reporter Module**: Generates comprehensive risk reports and lists risky commits
-- **Repository Module**: Analyzes individual commits and generates repository summaries
-- **Contributors Module**: Provides contributor-level insights and risk ranking
+Built on NitroStack, Git Risk Analyzer exposes its findings as MCP tools and renders interactive visualizations via built-in widgets.
 
-### Features
+## ✨ Why Git Risk Analyzer?
+Most code analysis tools force you to upload source to the cloud, pay for SaaS subscriptions, or wait minutes for scans. Git Risk Analyzer does none of that.
 
-- **Offline Analysis**: Works entirely with local Git data (no external APIs, no authentication required)
-- **Risk Dashboard Widget**: Visual display of repository risk metrics and top risky commits
-- **Commit Analysis**: Detailed breakdown of individual commits with risk assessment
-- **Repository Overview**: Aggregate metrics including contributor count, average risk, and most modified files
-- **Contributor Insights**: Per-author statistics, high-risk commits, and contributor ranking
-- **TypeScript + Zod**: Full type safety and validation
-- **Production-ready**: Optimized for deployment
+✅ **100% offline** — your code and git history never leave your machine
+✅ **Deep Git Integration** — analyzes actual commit history and diff statistics
+✅ **Instant results** — processes thousands of commits in seconds
+✅ **AI-native** — designed for MCP, works with any AI assistant
 
-## Risk Scoring Algorithm
+## 🎯 Who Is It For?
+**🎓 Students & Learners**
+- Understand how your commit habits impact repository health
+- Catch risky changes before pushing assignments
 
-Each commit receives a risk score (0-100) based on:
+**💼 Professional Developers**
+- Pre-commit health checks before opening PRs
+- Onboard faster on unfamiliar codebases by understanding contributor patterns
+- Identify hardcoded secrets and risky file changes (like `.env` or config modifications)
 
-- **Message Quality** (0-20 pts): Penalizes short or unclear commit messages
-- **Diff Size** (0-40 pts): Penalizes large changes (additions + deletions)
-- **Sensitive Files** (0-40 pts): Penalizes changes to `.env`, `package.json`, migrations, config files, etc.
+**🏢 Engineering Teams**
+- Track health scores across releases
+- Automated code review guidance for junior developers
+- Bus factor analysis to ensure knowledge isn't locked up with one developer
 
-## Available Tools
+## 🚀 Project Features
 
-### Scanner Tools
-- `fetch-recent-commits`: Fetch recent commits with diff statistics
-- `score-commit`: Calculate risk score for a specific commit
+### 1. Repository Health Score
+**Tool:** `repository-health-score`
 
-### Reporter Tools
-- `list-risky-commits`: List commits exceeding a risk threshold, ranked by score
-- `generate-risk-report`: Generate comprehensive report with top 10 risky commits
+Scans the entire repository history and returns a comprehensive health status:
+- Overall health score (excellent, good, fair, poor)
+- Total commits and contributors
+- Most modified files (hotspots)
+- Recent activity and actionable recommendations
 
-### Repository Tools
-- `analyze-commit`: Analyze a specific commit with human-readable summary and risk assessment
-- `repository-summary`: Generate repository overview (commits, contributors, average risk, most modified files)
+### 2. Commit Risk Scoring
+**Tool:** `score-commit`
 
-### Contributors Tools
-- `contributor-stats`: Get contributor-level insights (commit count, average risk, high-risk commits, modified files)
-- `top-risk-contributors`: Rank contributors by average repository risk score
+Analyzes a specific commit and calculates a precise risk score (0-100) based on:
+- **Message Quality:** Penalizes short or unclear commit messages
+- **Diff Size:** Penalizes massive changes (additions + deletions)
+- **Sensitive Files:** Penalizes changes to `.env`, `package.json`, migrations, and configs
+- Includes a human-readable summary and reasoning with the `verbose` flag.
 
-## Usage Examples
+### 3. Contributor Statistics
+**Tool:** `contributor-stats`
 
-### Analyze a Specific Commit
-```
-User: "Analyze commit a3f7e2c1"
-Assistant: Returns commit summary, changed files, risk score, and reasoning
-```
+Provides deep insights into individual contributors or ranks all contributors by risk:
+- Total commits and average risk score
+- High-risk commits authored
+- Most frequently modified files by author
+- Rank all contributors by average risk score or commit count
 
-### Get Repository Overview
-```
-User: "Give me a repository summary for /home/user/my-project"
-Assistant: Returns total commits, contributors, average risk, most modified files, and recent activity
-```
+### 4. Risky Commits List
+**Tool:** `list-risky-commits`
 
-### Contributor Insights
-```
-User: "Show contributor stats for alice@example.com"
-Assistant: Returns commit count, average risk score, high-risk commits, and frequently modified files
-```
+Filters the repository history to find the most dangerous commits:
+- Configurable risk threshold
+- Returns commits exceeding the threshold, ranked by score
 
-### Risk Ranking
-```
-User: "Who are the top 5 risky contributors?"
-Assistant: Returns ranked list of contributors by average risk score
-```
+### 5. Comprehensive Risk Report
+**Tool:** `generate-risk-report`
 
-## Architecture
+Generates an aggregated report of the repository's risk profile:
+- Analyzes the entire repository
+- Highlights the top 10 most risky commits
+- Perfect for sprint retrospectives
 
-### Offline-First Design
+### 6. Branch Comparison
+**Tool:** `compare-branches`
 
-The project is designed to work entirely offline:
-- **No GitHub APIs**: Uses only local Git repositories
-- **No Authentication**: No credentials or tokens required
-- **Fixture-Based**: Currently uses `fixtures/commits.json` for demo data
-- **Future-Ready**: Git service abstraction allows easy migration to real `git` commands
+Compares risk metrics between two branches (e.g., `feature-branch` vs `main`):
+- Helps identify if a new branch is introducing excessive risk before merging
 
-### Service Layer
+## 💡 Example Use Cases
 
-- **GitService**: Unified interface for Git operations (fixture-based, easily extensible)
-- **RiskScorerService**: Centralized risk scoring logic used across all modules
-- **RepositoryService**: Repository-level analysis and aggregation
-- **ContributorsService**: Contributor-level insights and ranking
+**"I'm inheriting a legacy codebase. Where do I start?"**
+Run `repository-health-score` → see the most modified files and overall health to know exactly where the hotspots are.
 
-### Module Structure
+**"Who are the top 5 riskiest contributors?"**
+Run `contributor-stats` with `sortBy: risk` → returns a ranked list of contributors based on their commit risk scores.
 
-```
-src/
-├── modules/
-│   ├── scanner/          # Fetch commits, score individual commits
-│   ├── reporter/         # Generate reports, list risky commits
-│   ├── repository/       # Analyze commits, repository summaries
-│   └── contributors/     # Contributor stats, risk ranking
-├── services/
-│   ├── git.service.ts    # Git operations (fixture-based)
-│   └── risk-scorer.service.ts  # Risk scoring logic
-└── app.module.ts         # Root module registration
-```
+**"Did this commit introduce something dangerous?"**
+Run `score-commit` with `verbose: true` → catch hardcoded keys or massive refactors in sensitive files.
 
-## Quick Start
+**"My team needs a risk report for the sprint."**
+Run `generate-risk-report` → professional output summarizing the riskiest changes.
 
+## 📝 Tools Summary
+
+| Tool | Module | Input | Output |
+|------|--------|-------|--------|
+| `connect-repository` | repository | `{ repo_path }` | Connection status and basic info |
+| `repository-health-score` | repository | `{ repo_path? }` | Full health score, hotspots, recommendations |
+| `score-commit` | scanner | `{ commit_hash, repo_path?, verbose? }` | Detailed risk score and summary |
+| `fetch-recent-commits` | scanner | `{ limit?, repo_path? }` | Array of recent commits with stats |
+| `list-risky-commits` | reporter | `{ threshold?, repo_path? }` | Commits exceeding risk threshold |
+| `generate-risk-report` | reporter | `{ repo_path? }` | Comprehensive risk report |
+| `contributor-stats` | contributors | `{ author?, repo_path?, sortBy?, limit? }` | Ranked stats and high-risk commits |
+| `compare-branches` | repository | `{ base_branch, target_branch, repo_path? }` | Comparison of risk metrics |
+
+## 🎯 Accuracy
+Git Risk Analyzer uses native local Git execution (`spawnSync`) to directly interface with your local repository. This means:
+- **No external API calls** — entirely local and fast
+- **Accurate Diffing** — uses raw git log outputs for precise addition/deletion counts
+- **Fixture Fallback** — smoothly falls back to mock data (`fixtures/commits.json`) for testing if no repository path is provided
+
+## 📦 Quick Start
 ```bash
+# Install dependencies
+npm install
+
+# Development mode (STDIO transport)
 npm run dev
+
+# Production build
+npm run build
+
+# Production start
+npm start
 ```
 
-## Common Commands
+## ⚙️ Configuration
+Transport is configured automatically based on `NODE_ENV`:
+- Development (`NODE_ENV=development`): STDIO only
+- Production (`NODE_ENV=production`): Dual transport (STDIO + HTTP SSE)
+Environment variables are loaded from `.env` via `dotenv`.
 
-```bash
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm start            # Build and start
-npm run start:prod   # Start production build
+## 🏗️ Project Structure
+```text
+src/
+├── index.ts                       # Entry point
+├── app.module.ts                  # Root MCP module
+├── modules/
+│   ├── scanner/                   # Fetch commits, score individual commits
+│   ├── reporter/                  # Generate reports, list risky commits
+│   ├── repository/                # Analyze commits, repository summaries
+│   └── contributors/              # Contributor stats, risk ranking
+├── services/
+│   ├── git.service.ts             # Git operations & CLI execution
+│   └── risk-scorer.service.ts     # Core risk scoring logic
+└── health/
+    └── system.health.ts           # System health check
 ```
 
-## NitroStudio
+## 🛠️ Dependencies
+- **@nitrostack/core** — MCP framework with decorators and DI
+- **@nitrostack/cli** — Build tooling
+- **typescript** — Strong typing
+- **zod** — Input schema validation
+- **@nitrostack/widgets** — Widget SDK for interactive views
 
-NitroStudio is the recommended way to test and debug this project during development.
+## 🔒 Privacy & Security
+- **Zero network calls** — everything runs locally
+- **No code upload** — your repository stays on your machine
+- **No API keys** — no external services, no rate limits
+- **No telemetry** — we don't track what you analyze
 
-- Download: <https://nitrostack.ai/studio>
-- Studio: <https://nitrostack.ai/studio>
-
-## Future Enhancements
-
-- **Real Git Integration**: Replace fixture data with actual `git log` parsing
-- **Repository Cloning**: Support for analyzing remote repositories
-- **Custom Risk Rules**: Configurable risk scoring based on team preferences
-- **Historical Trends**: Track risk metrics over time
-- **Team Dashboards**: Multi-repository analysis and team-level insights
-
-## Links
-
-- Docs: <https://docs.nitrostack.ai>
-- Main repository: <https://github.com/nitrocloudofficial/nitrostack>
+## 🔗 Links
+- [NitroStack Documentation](https://docs.nitrostack.ai)
+- [NitroStudio](https://nitrostack.ai/studio)
+- [GitHub](https://github.com/nitrocloudofficial/nitrostack)
 
 ## Community
-
 - Discord: <https://discord.gg/uVWey6UhuD>
 - X: <https://x.com/nitrostackai>
 - YouTube: <https://www.youtube.com/@nitrostackai>
