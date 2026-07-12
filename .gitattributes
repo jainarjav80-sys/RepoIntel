@@ -1,0 +1,6 @@
+# Ignore HTML files for language statistics calculation
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+
+# Alternatively, you can mark the whole widgets directory as vendored so it doesn't count
+# src/widgets/** linguist-vendored
