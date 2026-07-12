@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Injectable, createLogger } from '@nitrostack/core';
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 const logger = createLogger({ serviceName: 'GitService' });
 /**
  * Git Service
@@ -150,15 +150,18 @@ let GitService = class GitService {
     executeGitCommand(repoPath, args) {
         try {
             const normalizedPath = path.resolve(repoPath);
-            const command = `git -C "${normalizedPath}" ${args.join(' ')}`;
-            const result = execSync(command, {
+            const result = spawnSync('git', ['-C', normalizedPath, ...args], {
                 encoding: 'utf-8',
-                stdio: ['pipe', 'pipe', 'pipe'],
-                // Large repositories (thousands of commits) with --numstat output can
-                // easily exceed Node's default 1MB maxBuffer; raise it generously.
                 maxBuffer: 64 * 1024 * 1024
             });
-            return result.trim();
+            if (result.error) {
+                throw result.error;
+            }
+            if (result.status !== 0) {
+                const stderr = result.stderr ? result.stderr.toString() : '';
+                throw new Error(stderr || `Git command failed with status ${result.status}`);
+            }
+            return result.stdout ? result.stdout.toString().trim() : '';
         }
         catch (error) {
             // Log git command failures for debugging

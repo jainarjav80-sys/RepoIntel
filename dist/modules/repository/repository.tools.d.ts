@@ -13,30 +13,6 @@ export declare class RepositoryTools {
         last_commit_date: string | undefined;
         error: string | undefined;
     }>;
-    analyzeCommit(input: any, ctx: ExecutionContext): Promise<{
-        commit_hash: string;
-        summary: string;
-        files_changed: string[];
-        lines_added: number;
-        lines_removed: number;
-        risk_score: number;
-        risk_reasons: string[];
-    }>;
-    repositorySummary(input: any, ctx: ExecutionContext): Promise<{
-        total_commits: number;
-        total_contributors: number;
-        average_risk_score: number;
-        most_modified_files: {
-            file: string;
-            change_count: number;
-        }[];
-        recent_activity: {
-            hash: string;
-            message: string;
-            author: string;
-            date: string;
-        }[];
-    }>;
     compareBranches(input: any, ctx: ExecutionContext): Promise<{
         base_branch: string;
         target_branch: string;
@@ -61,6 +37,16 @@ export declare class RepositoryTools {
         health_status: "excellent" | "good" | "fair" | "poor";
         recommendations: string[];
         summary: string;
+        most_modified_files: {
+            file: string;
+            change_count: number;
+        }[];
+        recent_activity: {
+            hash: string;
+            message: string;
+            author: string;
+            date: string;
+        }[];
     }>;
 }
 //# sourceMappingURL=repository.tools.d.ts.map

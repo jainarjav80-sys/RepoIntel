@@ -5,40 +5,6 @@ export declare class RepositoryService {
     private riskScorerService;
     constructor(gitService: GitService, riskScorerService: RiskScorerService);
     /**
-     * Analyze a specific commit
-     */
-    analyzeCommit(commitHash: string, repoPath?: string): {
-        commit_hash: string;
-        summary: string;
-        files_changed: string[];
-        lines_added: number;
-        lines_removed: number;
-        risk_score: number;
-        risk_reasons: string[];
-    };
-    /**
-     * Generate a human-readable summary of a commit
-     */
-    private generateCommitSummary;
-    /**
-     * Generate repository summary
-     */
-    generateRepositorySummary(repoPath: string): {
-        total_commits: number;
-        total_contributors: number;
-        average_risk_score: number;
-        most_modified_files: {
-            file: string;
-            change_count: number;
-        }[];
-        recent_activity: {
-            hash: string;
-            message: string;
-            author: string;
-            date: string;
-        }[];
-    };
-    /**
      * Connect to a repository and validate it
      */
     connectRepository(repoPath: string): {
@@ -76,6 +42,16 @@ export declare class RepositoryService {
         health_status: "excellent" | "good" | "fair" | "poor";
         recommendations: string[];
         summary: string;
+        most_modified_files: {
+            file: string;
+            change_count: number;
+        }[];
+        recent_activity: {
+            hash: string;
+            message: string;
+            author: string;
+            date: string;
+        }[];
     };
 }
 //# sourceMappingURL=repository.service.d.ts.map

@@ -18,59 +18,6 @@ let RepositoryService = class RepositoryService {
         this.riskScorerService = riskScorerService;
     }
     /**
-     * Analyze a specific commit
-     */
-    analyzeCommit(commitHash, repoPath) {
-        const commit = this.gitService.findCommitByHash(commitHash, repoPath);
-        if (!commit) {
-            throw new Error(`Commit ${commitHash} not found`);
-        }
-        const riskScore = this.riskScorerService.calculateRiskScore(commit);
-        const riskReasons = this.riskScorerService.getRiskReasoning(commit, riskScore);
-        // Generate summary
-        const summary = this.generateCommitSummary(commit, riskScore);
-        return {
-            commit_hash: commit.hash,
-            summary,
-            files_changed: commit.sensitiveFiles,
-            lines_added: commit.diffStats.additions,
-            lines_removed: commit.diffStats.deletions,
-            risk_score: riskScore,
-            risk_reasons: riskReasons
-        };
-    }
-    /**
-     * Generate a human-readable summary of a commit
-     */
-    generateCommitSummary(commit, riskScore) {
-        const riskLevel = riskScore >= 70 ? 'HIGH' : riskScore >= 40 ? 'MEDIUM' : 'LOW';
-        const totalChanges = commit.diffStats.additions + commit.diffStats.deletions;
-        return `${commit.message} (${riskLevel} risk: ${riskScore}/100). Author: ${commit.author}. Changes: +${commit.diffStats.additions}/-${commit.diffStats.deletions} across ${commit.diffStats.filesChanged} file(s).`;
-    }
-    /**
-     * Generate repository summary
-     */
-    generateRepositorySummary(repoPath) {
-        const allCommits = this.gitService.getAllCommits(repoPath);
-        const authors = this.gitService.getAuthors(repoPath);
-        const averageRiskScore = this.riskScorerService.calculateAverageRiskScore(allCommits);
-        const mostModifiedFiles = this.gitService.getTopModifiedFiles(allCommits, 10);
-        // Recent activity (last 5 commits)
-        const recentActivity = allCommits.slice(0, 5).map(c => ({
-            hash: c.hash,
-            message: c.message,
-            author: c.author,
-            date: c.date
-        }));
-        return {
-            total_commits: allCommits.length,
-            total_contributors: authors.length,
-            average_risk_score: averageRiskScore,
-            most_modified_files: mostModifiedFiles,
-            recent_activity: recentActivity
-        };
-    }
-    /**
      * Connect to a repository and validate it
      */
     connectRepository(repoPath) {
@@ -216,7 +163,14 @@ let RepositoryService = class RepositoryService {
             last_commit_date: lastCommitDate,
             health_status: healthStatus,
             recommendations,
-            summary
+            summary,
+            most_modified_files: this.gitService.getTopModifiedFiles(allCommits, 10),
+            recent_activity: allCommits.slice(0, 5).map(c => ({
+                hash: c.hash,
+                message: c.message,
+                author: c.author,
+                date: c.date
+            }))
         };
     }
 };

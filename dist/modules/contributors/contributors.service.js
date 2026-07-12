@@ -20,55 +20,54 @@ let ContributorsService = class ContributorsService {
     /**
      * Get contributor statistics
      */
-    getContributorStats(author, repoPath) {
-        const commits = this.gitService.getCommitsByAuthor(author, repoPath);
-        if (commits.length === 0) {
+    getContributorStats(options) {
+        const { author, repoPath, sortBy, limit = 10 } = options;
+        const allCommits = this.gitService.getAllCommits(repoPath);
+        const authors = author ? [author] : this.gitService.getAuthors(repoPath);
+        let stats = authors.map(a => {
+            const commits = allCommits.filter(c => c.author === a);
+            if (commits.length === 0)
+                return null;
+            const averageRiskScore = this.riskScorerService.calculateAverageRiskScore(commits);
+            const stat = {
+                author: a,
+                total_commits: commits.length,
+                average_risk_score: averageRiskScore
+            };
+            if (author) {
+                const highRiskCommits = this.riskScorerService.getHighRiskCommits(commits, 60);
+                const fileMap = new Map();
+                commits.forEach(commit => {
+                    commit.sensitiveFiles.forEach(file => {
+                        fileMap.set(file, (fileMap.get(file) || 0) + 1);
+                    });
+                });
+                const mostModifiedFiles = Array.from(fileMap.entries())
+                    .map(([file, count]) => ({ file, change_count: count }))
+                    .sort((a, b) => b.change_count - a.change_count)
+                    .slice(0, 10);
+                stat.high_risk_commits = highRiskCommits.map(c => ({
+                    hash: c.hash,
+                    message: c.message,
+                    risk_score: c.riskScore
+                }));
+                stat.most_modified_files = mostModifiedFiles;
+            }
+            return stat;
+        }).filter(s => s !== null);
+        if (sortBy === 'risk') {
+            stats.sort((a, b) => b.average_risk_score - a.average_risk_score);
+        }
+        else if (sortBy === 'commits') {
+            stats.sort((a, b) => b.total_commits - a.total_commits);
+        }
+        if (!author && limit) {
+            stats = stats.slice(0, limit);
+        }
+        if (author && stats.length === 0) {
             throw new Error(`No commits found for author: ${author}`);
         }
-        const averageRiskScore = this.riskScorerService.calculateAverageRiskScore(commits);
-        const highRiskCommits = this.riskScorerService.getHighRiskCommits(commits, 60);
-        // Get most modified files by this author
-        const fileMap = new Map();
-        commits.forEach(commit => {
-            commit.sensitiveFiles.forEach(file => {
-                fileMap.set(file, (fileMap.get(file) || 0) + 1);
-            });
-        });
-        const mostModifiedFiles = Array.from(fileMap.entries())
-            .map(([file, count]) => ({ file, change_count: count }))
-            .sort((a, b) => b.change_count - a.change_count)
-            .slice(0, 10);
-        return {
-            author,
-            total_commits: commits.length,
-            average_risk_score: averageRiskScore,
-            high_risk_commits: highRiskCommits.map(c => ({
-                hash: c.hash,
-                message: c.message,
-                risk_score: c.riskScore
-            })),
-            most_modified_files: mostModifiedFiles
-        };
-    }
-    /**
-     * Get top risk contributors
-     */
-    getTopRiskContributors(limit = 10, repoPath) {
-        const allCommits = this.gitService.getAllCommits(repoPath);
-        const authors = this.gitService.getAuthors(repoPath);
-        const contributorRisks = authors.map(author => {
-            const authorCommits = allCommits.filter(c => c.author === author);
-            const averageRisk = this.riskScorerService.calculateAverageRiskScore(authorCommits);
-            return {
-                author,
-                average_risk: averageRisk,
-                total_commits: authorCommits.length
-            };
-        });
-        // Sort by average risk (descending)
-        return contributorRisks
-            .sort((a, b) => b.average_risk - a.average_risk)
-            .slice(0, limit);
+        return { contributors: stats };
     }
     /**
      * Analyze bus factor - identify key contributors whose absence would impact the project

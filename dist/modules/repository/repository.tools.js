@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ToolDecorator as Tool, Injectable } from '@nitrostack/core';
 import { RepositoryService } from './repository.service.js';
-import { AnalyzeCommitInputSchema, RepositorySummaryInputSchema, ConnectRepositoryInputSchema, CompareBranchesInputSchema, RepositoryHealthScoreInputSchema } from './schemas/commit.schema.js';
+import { ConnectRepositoryInputSchema, CompareBranchesInputSchema, RepositoryHealthScoreInputSchema } from './schemas/commit.schema.js';
 import { GitService } from '../../services/git.service.js';
 let RepositoryTools = class RepositoryTools {
     repositoryService;
@@ -47,54 +47,6 @@ let RepositoryTools = class RepositoryTools {
                 error: errorMessage
             });
             throw new Error(`Repository connection failed: ${errorMessage}`);
-        }
-    }
-    async analyzeCommit(input, ctx) {
-        try {
-            if (!input.commit_hash || typeof input.commit_hash !== 'string') {
-                throw new Error('commit_hash is required and must be a string');
-            }
-            ctx.logger.info('Analyzing commit', { commit_hash: input.commit_hash });
-            const result = this.repositoryService.analyzeCommit(input.commit_hash);
-            if (!result) {
-                throw new Error(`Commit ${input.commit_hash} not found`);
-            }
-            ctx.logger.info('Commit analyzed', {
-                commit_hash: input.commit_hash,
-                risk_score: result.risk_score
-            });
-            return result;
-        }
-        catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            ctx.logger.error('Failed to analyze commit', {
-                commit_hash: input.commit_hash,
-                error: errorMessage
-            });
-            throw new Error(`Failed to analyze commit: ${errorMessage}`);
-        }
-    }
-    async repositorySummary(input, ctx) {
-        try {
-            const repo_path = input.repo_path || undefined;
-            ctx.logger.info('Generating repository summary', { repo_path });
-            const result = this.repositoryService.generateRepositorySummary(repo_path);
-            if (!result) {
-                throw new Error('Failed to generate repository summary');
-            }
-            ctx.logger.info('Repository summary generated', {
-                total_commits: result.total_commits,
-                total_contributors: result.total_contributors
-            });
-            return result;
-        }
-        catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            ctx.logger.error('Failed to generate repository summary', {
-                repo_path: input.repo_path,
-                error: errorMessage
-            });
-            throw new Error(`Failed to generate repository summary: ${errorMessage}`);
         }
     }
     async compareBranches(input, ctx) {
@@ -180,65 +132,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], RepositoryTools.prototype, "connectRepository", null);
-__decorate([
-    Tool({
-        name: 'analyze-commit',
-        description: 'Analyze a specific commit and provide a human-readable summary with risk assessment',
-        inputSchema: AnalyzeCommitInputSchema,
-        examples: {
-            request: {
-                commit_hash: 'a3f7e2c1'
-            },
-            response: {
-                commit_hash: 'a3f7e2c1',
-                summary: 'Update .env with new API keys (HIGH risk: 75/100). Author: alice@example.com. Changes: +5/-2 across 1 file(s).',
-                files_changed: ['.env'],
-                lines_added: 5,
-                lines_removed: 2,
-                risk_score: 75,
-                risk_reasons: [
-                    'Modifies sensitive files: .env',
-                    'Poor commit message (31 chars)'
-                ]
-            }
-        }
-    }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], RepositoryTools.prototype, "analyzeCommit", null);
-__decorate([
-    Tool({
-        name: 'repository-summary',
-        description: 'Generate an overview of the repository including commit count, contributors, and risk metrics',
-        inputSchema: RepositorySummaryInputSchema,
-        examples: {
-            request: {
-                repo_path: '/home/user/my-project'
-            },
-            response: {
-                total_commits: 15,
-                total_contributors: 10,
-                average_risk_score: 45.5,
-                most_modified_files: [
-                    { file: '.env', change_count: 3 },
-                    { file: 'config/config.yml', change_count: 2 }
-                ],
-                recent_activity: [
-                    {
-                        hash: 'a3f7e2c1',
-                        message: 'Update .env with new API keys',
-                        author: 'alice@example.com',
-                        date: '2026-06-25T14:30:00Z'
-                    }
-                ]
-            }
-        }
-    }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], RepositoryTools.prototype, "repositorySummary", null);
 __decorate([
     Tool({
         name: 'compare-branches',

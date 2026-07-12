@@ -12,36 +12,6 @@ export const CommitSchema = z.object({
     sensitiveFiles: z.array(z.string()),
     imageUrl: z.string().optional()
 });
-export const AnalyzeCommitInputSchema = z.object({
-    commit_hash: z.string().describe('The commit hash to analyze')
-});
-export const AnalyzeCommitOutputSchema = z.object({
-    commit_hash: z.string(),
-    summary: z.string().describe('Human-readable summary of the commit'),
-    files_changed: z.array(z.string()).describe('List of modified files'),
-    lines_added: z.number(),
-    lines_removed: z.number(),
-    risk_score: z.number().min(0).max(100),
-    risk_reasons: z.array(z.string()).describe('Explanation of risk factors')
-});
-export const RepositorySummaryInputSchema = z.object({
-    repo_path: z.string().describe('Path to the Git repository')
-});
-export const RepositorySummaryOutputSchema = z.object({
-    total_commits: z.number(),
-    total_contributors: z.number(),
-    average_risk_score: z.number(),
-    most_modified_files: z.array(z.object({
-        file: z.string(),
-        change_count: z.number()
-    })),
-    recent_activity: z.array(z.object({
-        hash: z.string(),
-        message: z.string(),
-        author: z.string(),
-        date: z.string()
-    }))
-});
 export const ConnectRepositoryInputSchema = z.object({
     repo_path: z.string().describe('Path to the Git repository')
 });
@@ -84,6 +54,16 @@ export const RepositoryHealthScoreOutputSchema = z.object({
     last_commit_date: z.string().optional().describe('Date of the last commit'),
     health_status: z.enum(['excellent', 'good', 'fair', 'poor']).describe('Overall health status'),
     recommendations: z.array(z.string()).describe('Recommendations for improving repository health'),
-    summary: z.string().describe('Human-readable summary of repository health')
+    summary: z.string().describe('Human-readable summary of repository health'),
+    most_modified_files: z.array(z.object({
+        file: z.string(),
+        change_count: z.number()
+    })).describe('List of files most frequently modified'),
+    recent_activity: z.array(z.object({
+        hash: z.string(),
+        message: z.string(),
+        author: z.string(),
+        date: z.string()
+    })).describe('Recent commit activity')
 });
 //# sourceMappingURL=commit.schema.js.map

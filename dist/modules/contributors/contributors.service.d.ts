@@ -7,28 +7,14 @@ export declare class ContributorsService {
     /**
      * Get contributor statistics
      */
-    getContributorStats(author: string, repoPath?: string): {
-        author: string;
-        total_commits: number;
-        average_risk_score: number;
-        high_risk_commits: {
-            hash: string;
-            message: string;
-            risk_score: number;
-        }[];
-        most_modified_files: {
-            file: string;
-            change_count: number;
-        }[];
+    getContributorStats(options: {
+        author?: string;
+        repoPath?: string;
+        sortBy?: 'risk' | 'commits';
+        limit?: number;
+    }): {
+        contributors: any[];
     };
-    /**
-     * Get top risk contributors
-     */
-    getTopRiskContributors(limit?: number, repoPath?: string): {
-        author: string;
-        average_risk: number;
-        total_commits: number;
-    }[];
     /**
      * Analyze bus factor - identify key contributors whose absence would impact the project
      */

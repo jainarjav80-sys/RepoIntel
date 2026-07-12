@@ -69,6 +69,17 @@ let ScannerTools = class ScannerTools {
                 commit_hash: input.commit_hash,
                 risk_score: riskScore
             });
+            let verboseData = {};
+            if (input.verbose) {
+                const riskLevel = riskScore >= 70 ? 'HIGH' : riskScore >= 40 ? 'MEDIUM' : 'LOW';
+                const summary = `${commit.message} (${riskLevel} risk: ${riskScore}/100). Author: ${commit.author}. Changes: +${commit.diffStats.additions}/-${commit.diffStats.deletions} across ${commit.diffStats.filesChanged} file(s).`;
+                verboseData = {
+                    summary,
+                    files_changed: commit.sensitiveFiles,
+                    lines_added: commit.diffStats.additions,
+                    lines_removed: commit.diffStats.deletions
+                };
+            }
             return {
                 commit_hash: input.commit_hash,
                 message: commit.message,
@@ -77,7 +88,8 @@ let ScannerTools = class ScannerTools {
                 risk_score: riskScore,
                 reasoning,
                 diff_stats: commit.diffStats,
-                sensitive_files: commit.sensitiveFiles
+                sensitive_files: commit.sensitiveFiles,
+                ...verboseData
             };
         }
         catch (error) {
@@ -132,11 +144,13 @@ __decorate([
         description: 'Calculate risk score for a specific commit based on message quality, diff size, and sensitive file changes',
         inputSchema: z.object({
             commit_hash: z.string().min(1).describe('The commit hash to score'),
-            repo_path: z.string().optional().describe('Path to the Git repository (optional, uses fixtures if not provided)')
+            repo_path: z.string().optional().describe('Path to the Git repository (optional, uses fixtures if not provided)'),
+            verbose: z.boolean().optional().describe('Return human-readable summary alongside score')
         }),
         examples: {
             request: {
-                commit_hash: 'a3f7e2c1'
+                commit_hash: 'a3f7e2c1',
+                verbose: true
             },
             response: {
                 commit_hash: 'a3f7e2c1',

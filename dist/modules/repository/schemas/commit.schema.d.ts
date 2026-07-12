@@ -44,104 +44,6 @@ export declare const CommitSchema: z.ZodObject<{
     author: string;
     imageUrl?: string | undefined;
 }>;
-export declare const AnalyzeCommitInputSchema: z.ZodObject<{
-    commit_hash: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    commit_hash: string;
-}, {
-    commit_hash: string;
-}>;
-export declare const AnalyzeCommitOutputSchema: z.ZodObject<{
-    commit_hash: z.ZodString;
-    summary: z.ZodString;
-    files_changed: z.ZodArray<z.ZodString, "many">;
-    lines_added: z.ZodNumber;
-    lines_removed: z.ZodNumber;
-    risk_score: z.ZodNumber;
-    risk_reasons: z.ZodArray<z.ZodString, "many">;
-}, "strip", z.ZodTypeAny, {
-    commit_hash: string;
-    risk_score: number;
-    summary: string;
-    files_changed: string[];
-    lines_added: number;
-    lines_removed: number;
-    risk_reasons: string[];
-}, {
-    commit_hash: string;
-    risk_score: number;
-    summary: string;
-    files_changed: string[];
-    lines_added: number;
-    lines_removed: number;
-    risk_reasons: string[];
-}>;
-export declare const RepositorySummaryInputSchema: z.ZodObject<{
-    repo_path: z.ZodString;
-}, "strip", z.ZodTypeAny, {
-    repo_path: string;
-}, {
-    repo_path: string;
-}>;
-export declare const RepositorySummaryOutputSchema: z.ZodObject<{
-    total_commits: z.ZodNumber;
-    total_contributors: z.ZodNumber;
-    average_risk_score: z.ZodNumber;
-    most_modified_files: z.ZodArray<z.ZodObject<{
-        file: z.ZodString;
-        change_count: z.ZodNumber;
-    }, "strip", z.ZodTypeAny, {
-        file: string;
-        change_count: number;
-    }, {
-        file: string;
-        change_count: number;
-    }>, "many">;
-    recent_activity: z.ZodArray<z.ZodObject<{
-        hash: z.ZodString;
-        message: z.ZodString;
-        author: z.ZodString;
-        date: z.ZodString;
-    }, "strip", z.ZodTypeAny, {
-        hash: string;
-        message: string;
-        date: string;
-        author: string;
-    }, {
-        hash: string;
-        message: string;
-        date: string;
-        author: string;
-    }>, "many">;
-}, "strip", z.ZodTypeAny, {
-    total_commits: number;
-    average_risk_score: number;
-    total_contributors: number;
-    most_modified_files: {
-        file: string;
-        change_count: number;
-    }[];
-    recent_activity: {
-        hash: string;
-        message: string;
-        date: string;
-        author: string;
-    }[];
-}, {
-    total_commits: number;
-    average_risk_score: number;
-    total_contributors: number;
-    most_modified_files: {
-        file: string;
-        change_count: number;
-    }[];
-    recent_activity: {
-        hash: string;
-        message: string;
-        date: string;
-        author: string;
-    }[];
-}>;
 export declare const ConnectRepositoryInputSchema: z.ZodObject<{
     repo_path: z.ZodString;
 }, "strip", z.ZodTypeAny, {
@@ -235,37 +137,79 @@ export declare const RepositoryHealthScoreOutputSchema: z.ZodObject<{
     health_status: z.ZodEnum<["excellent", "good", "fair", "poor"]>;
     recommendations: z.ZodArray<z.ZodString, "many">;
     summary: z.ZodString;
+    most_modified_files: z.ZodArray<z.ZodObject<{
+        file: z.ZodString;
+        change_count: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        file: string;
+        change_count: number;
+    }, {
+        file: string;
+        change_count: number;
+    }>, "many">;
+    recent_activity: z.ZodArray<z.ZodObject<{
+        hash: z.ZodString;
+        message: z.ZodString;
+        author: z.ZodString;
+        date: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        hash: string;
+        message: string;
+        date: string;
+        author: string;
+    }, {
+        hash: string;
+        message: string;
+        date: string;
+        author: string;
+    }>, "many">;
 }, "strip", z.ZodTypeAny, {
     risk_score: number;
-    total_commits: number;
     summary: string;
-    total_contributors: number;
+    total_commits: number;
     repository_name: string;
     overall_health_score: number;
     commit_frequency_score: number;
     code_quality_score: number;
     contributor_diversity_score: number;
+    total_contributors: number;
     health_status: "excellent" | "good" | "fair" | "poor";
     recommendations: string[];
+    most_modified_files: {
+        file: string;
+        change_count: number;
+    }[];
+    recent_activity: {
+        hash: string;
+        message: string;
+        date: string;
+        author: string;
+    }[];
     last_commit_date?: string | undefined;
 }, {
     risk_score: number;
-    total_commits: number;
     summary: string;
-    total_contributors: number;
+    total_commits: number;
     repository_name: string;
     overall_health_score: number;
     commit_frequency_score: number;
     code_quality_score: number;
     contributor_diversity_score: number;
+    total_contributors: number;
     health_status: "excellent" | "good" | "fair" | "poor";
     recommendations: string[];
+    most_modified_files: {
+        file: string;
+        change_count: number;
+    }[];
+    recent_activity: {
+        hash: string;
+        message: string;
+        date: string;
+        author: string;
+    }[];
     last_commit_date?: string | undefined;
 }>;
-export type AnalyzeCommitInput = z.infer<typeof AnalyzeCommitInputSchema>;
-export type AnalyzeCommitOutput = z.infer<typeof AnalyzeCommitOutputSchema>;
-export type RepositorySummaryInput = z.infer<typeof RepositorySummaryInputSchema>;
-export type RepositorySummaryOutput = z.infer<typeof RepositorySummaryOutputSchema>;
 export type ConnectRepositoryInput = z.infer<typeof ConnectRepositoryInputSchema>;
 export type ConnectRepositoryOutput = z.infer<typeof ConnectRepositoryOutputSchema>;
 export type CompareBranchesInput = z.infer<typeof CompareBranchesInputSchema>;
