@@ -96,6 +96,14 @@ One-shot aggregate report across the whole repository:
 The pre-merge gate. Compares risk metrics between two branches (e.g. `feature/x` vs `main`):
 - Flags whether a branch is introducing excessive risk before you approve the merge
 
+### 7. Pull Request Analysis
+**Tool:** `analyze-pr`
+
+Instantly analyze any public GitHub Pull Request without needing GitHub API keys:
+- Pass a GitHub PR URL (e.g., `https://github.com/owner/repo/pull/123`)
+- Automatically clones the repository and fetches the PR branch natively
+- Compares against the default branch and generates a risk score and summary
+
 ---
 
 ## Example Use Cases
@@ -129,6 +137,9 @@ Run `generate-risk-report` — a clean, professional summary of the riskiest cha
 | `generate-risk-report` | reporter | `{ repo_path? }` | Comprehensive risk report |
 | `contributor-stats` | contributors | `{ author?, repo_path?, sortBy?, limit? }` | Ranked contributor stats and high-risk commits |
 | `compare-branches` | repository | `{ base_branch, target_branch, repo_path? }` | Risk comparison between two branches |
+| `analyze-pr` | repository | `{ pr_url }` | Risk analysis of a remote GitHub Pull Request |
+
+> **Note:** All tools that accept a `repo_path` can now seamlessly accept remote **GitHub URLs** as well. The server will transparently clone and cache the repository locally to perform the analysis!
 
 ---
 
