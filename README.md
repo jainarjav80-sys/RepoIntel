@@ -13,7 +13,7 @@ RepoIntel is an MCP (Model Context Protocol) server that scans local Git reposit
 
 It's built for two moments that matter most: **reviewing a PR before you merge it**, and **inheriting a codebase you didn't write**. Built on NitroStack, it exposes all findings as MCP tools so any AI assistant can query your repo's risk profile directly.
 
-### 🎥 Demo Video
+###  Demo Video
 [![RepoIntel Demo](https://img.youtube.com/vi/_NWL7r-MM3M/maxresdefault.jpg)](https://www.youtube.com/watch?v=_NWL7r-MM3M)
 ---
 
